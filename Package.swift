@@ -9,32 +9,32 @@ let package = Package(
     products: [
         .library(
             name: "UseSmileID",
-            targets: ["UseSmileID", "SmileIDML"]
+            targets: ["UseSmileID", "UseSmileIDML"]
         ),
         .library(
-            name: "SmileIDML",
-            targets: ["SmileIDML"]
+            name: "UseSmileIDML",
+            targets: ["UseSmileIDML"]
         ),
         .library(
-            name: "SmileIDMLMediapipe",
-            targets: ["SmileIDMLMediapipe"]
+            name: "UseSmileIDMLMediapipe",
+            targets: ["UseSmileIDMLMediapipe"]
         ),
     ],
     targets: [
         .binaryTarget(
             name: "UseSmileID",
-            url: "https://github.com/smileidentity/ios-demo/releases/download/v1.0.0/UseSmileID.xcframework.zip",
-            checksum: "49d6352f715a2ce6421775e602e349109740585efd8b67eaffdf6a1d7275018a"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v1.0.0/UseSmileID.xcframework.zip",
+            checksum: "df7ab6aded3bcad229bf66f6085033bad2cb175c3f52d3be7b716142417fb21a"
         ),
         .binaryTarget(
-            name: "SmileIDML",
-            url: "https://github.com/smileidentity/ios-demo/releases/download/v1.0.0/SmileIDML.xcframework.zip",
-            checksum: "dda07de80cf6d0e0330e428fafed8cbf7ed9cf3969d19b6ee055f6fcd79d7d89"
+            name: "UseSmileIDML",
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v1.0.0/UseSmileIDML.xcframework.zip",
+            checksum: "82429b1ed52e3a983f2a1de4e2d6830c8109083c489160844ca7a32351acec0e"
         ),
         .binaryTarget(
-            name: "SmileIDMLMediapipe",
-            url: "https://github.com/smileidentity/ios-demo/releases/download/v1.0.0/SmileIDMLMediapipe.xcframework.zip",
-            checksum: "4d3fbc9ec330f7251ccab5dc12191219285872ccf530b9735e642b39df8dff02"
+            name: "UseSmileIDMLMediapipe",
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v1.0.0/UseSmileIDMediapipe.xcframework.zip",
+            checksum: "674600f10fe70d20ac3495a336e395dbbaecd0c95a59bbcfffb0a799d8b8ce01"
         ),
     ]
 )
