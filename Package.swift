@@ -4,8 +4,8 @@
 import PackageDescription
 
 let package = Package(
-	name: "SmileID",
-	platforms: [.iOS(.v13)],
+	name: "UseSmileID",
+	platforms: [.iOS(.v15)],
 	products: [
 		.library(
 			name: "UseSmileID",
