@@ -28,22 +28,22 @@ let package = Package(
         .binaryTarget(
             name: "UseSmileID",
             url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT/UseSmileID.xcframework.zip",
-            checksum: "5f26d0a25c6d5ca60b667ce73e4f2ff09b95ca7f35d3939bb1347d5f37530dea"
+            checksum: "ab90fe32fd4065fe4b5165abd79b5ffccc86ad82b0c028aa7e3fd8e6ad40b2a9"
         ),
         .binaryTarget(
             name: "UseSmileIDML",
             url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT/UseSmileIDML.xcframework.zip",
-            checksum: "f8f2d7f2c619b1c6cd602ac2316a9cd62741176f4c41089a198145ec7150afd8"
+            checksum: "3f157f0562d352162c8d751ca26b47d91f45352aaa6830a46f669127f057838a"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionFace",
             url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT/UseSmileIDVisionFace.xcframework.zip",
-            checksum: "7dedb2a7cfa6a5f113a360da3e8bcabbcb85ce64f7c7e5072c23c8d67892b70f"
+            checksum: "721b9d3b846cfd8e4a049a27281adeb41947461d9ac316b2f1e6ead9e890ecb7"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionDocument",
             url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT/UseSmileIDVisionDocument.xcframework.zip",
-            checksum: "622f209261dc274f8d0a8e8ef42a78e9f84f026a4608b27f87a2d603f9cb0e01"
+            checksum: "57eb0e0edb6a5d292750760cae9d55fb93afc0980379bb9a7458f3e224511c14"
         ),
     ]
 )
