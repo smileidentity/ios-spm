@@ -27,23 +27,23 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "UseSmileID",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT/UseSmileID.xcframework.zip",
-            checksum: "ab90fe32fd4065fe4b5165abd79b5ffccc86ad82b0c028aa7e3fd8e6ad40b2a9"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT.20260401093504.23842053957/UseSmileID.xcframework.zip",
+            checksum: "1c77f4452ddb38608bc50c66d52780237f3e585e0aac80f19fde69c2cfd1ebb1"
         ),
         .binaryTarget(
             name: "UseSmileIDML",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT/UseSmileIDML.xcframework.zip",
-            checksum: "3f157f0562d352162c8d751ca26b47d91f45352aaa6830a46f669127f057838a"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT.20260401093504.23842053957/UseSmileIDML.xcframework.zip",
+            checksum: "02c7dfd0ffc621fdf6e79e2c3b14ca86e4242e35415e990f03ea1a239ba06a00"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionFace",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT/UseSmileIDVisionFace.xcframework.zip",
-            checksum: "721b9d3b846cfd8e4a049a27281adeb41947461d9ac316b2f1e6ead9e890ecb7"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT.20260401093504.23842053957/UseSmileIDVisionFace.xcframework.zip",
+            checksum: "4983d0e56351d189685cc50006a11eb5d0f9ae4b117c03cdea6242f23c580131"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionDocument",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT/UseSmileIDVisionDocument.xcframework.zip",
-            checksum: "57eb0e0edb6a5d292750760cae9d55fb93afc0980379bb9a7458f3e224511c14"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT.20260401093504.23842053957/UseSmileIDVisionDocument.xcframework.zip",
+            checksum: "d62cd71569a5bc9d7e394c0ed3a99a1b666840523dc0131bcdfe7bef28ac8556"
         ),
     ]
 )
