@@ -17,11 +17,11 @@ let package = Package(
         ),
         .library(
             name: "UseSmileIDVisionFace",
-            targets: ["UseSmileIDVisionFace"]
+            targets: ["UseSmileIDVisionFace", "UseSmileIDML"]
         ),
         .library(
             name: "UseSmileIDVisionDocument",
-            targets: ["UseSmileIDVisionDocument"]
+            targets: ["UseSmileIDVisionDocument", "UseSmileIDML"]
         ),
     ],
     targets: [
