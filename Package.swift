@@ -16,8 +16,12 @@ let package = Package(
             targets: ["UseSmileIDML"]
         ),
         .library(
-            name: "UseSmileIDMLMediapipe",
-            targets: ["UseSmileIDMLMediapipe"]
+            name: "UseSmileIDVisionFace",
+            targets: ["UseSmileIDVisionFace"]
+        ),
+        .library(
+            name: "UseSmileIDVisionDocument",
+            targets: ["UseSmileIDVisionDocument"]
         ),
     ],
     targets: [
@@ -32,9 +36,14 @@ let package = Package(
             checksum: "82429b1ed52e3a983f2a1de4e2d6830c8109083c489160844ca7a32351acec0e"
         ),
         .binaryTarget(
-            name: "UseSmileIDMLMediapipe",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v1.0.0/UseSmileIDMediapipe.xcframework.zip",
-            checksum: "674600f10fe70d20ac3495a336e395dbbaecd0c95a59bbcfffb0a799d8b8ce01"
+            name: "UseSmileIDVisionFace",
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v1.0.0/UseSmileIDVisionFace.xcframework.zip",
+            checksum: ""
+        ),
+        .binaryTarget(
+            name: "UseSmileIDVisionDocument",
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v1.0.0/UseSmileIDVisionDocument.xcframework.zip",
+            checksum: ""
         ),
     ]
 )
