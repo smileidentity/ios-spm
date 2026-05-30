@@ -9,19 +9,19 @@ let package = Package(
     products: [
         .library(
             name: "UseSmileID",
-            targets: ["UseSmileID", "UseSmileIDML"]
+            targets: ["UseSmileID", "UseSmileIDBridge"]
         ),
         .library(
-            name: "UseSmileIDML",
-            targets: ["UseSmileIDML"]
+            name: "UseSmileIDBridge",
+            targets: ["UseSmileIDBridge"]
         ),
         .library(
             name: "UseSmileIDVisionFace",
-            targets: ["UseSmileIDVisionFace"]
+            targets: ["UseSmileIDVisionFace", "UseSmileIDBridge"]
         ),
         .library(
             name: "UseSmileIDVisionDocument",
-            targets: ["UseSmileIDVisionDocument"]
+            targets: ["UseSmileIDVisionDocument", "UseSmileIDBridge"]
         ),
     ],
     targets: [
@@ -31,9 +31,9 @@ let package = Package(
             checksum: "e51e48e21f0905cd32df8d41e4b605e4e445bcfbc1144a2ce5e96263bf3db751"
         ),
         .binaryTarget(
-            name: "UseSmileIDML",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT.20260526083538.26441596566/UseSmileIDML.xcframework.zip",
-            checksum: "5afdad4929a5406c2a00fdc1ff974e142bec0864453f969cbc6091b18e8e65d2"
+            name: "UseSmileIDBridge",
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0-SNAPSHOT.20260529183509.26655242900/UseSmileIDBridge.xcframework.zip",
+            checksum: "66becff3b62806ad4d1b9ee593ea4d3136da9f0d7364f86ae8488e928cc62c83"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionFace",
