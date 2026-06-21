@@ -23,13 +23,13 @@ Or add it to your own `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/smileidentity/ios-spm", exact: "12.0.0-beta.1")
+    .package(url: "https://github.com/smileidentity/ios-spm", exact: "12.0.0-beta01")
 ]
 ```
 
 Then add the `UseSmileID` product to your target's dependencies.
 
-> **Beta:** `12.0.0-beta.1` is a pre-release. Pin it with `exact:` as shown — Swift Package Manager
+> **Beta:** `12.0.0-beta01` is a pre-release. Pin it with `exact:` as shown — Swift Package Manager
 > does not select pre-release versions through `from:`. To track the latest beta build instead,
 > depend on the rolling `snapshot` branch:
 >
