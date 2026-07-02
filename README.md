@@ -1,5 +1,11 @@
 # Smile ID iOS SDK — Swift Package
 
+[![Release](https://img.shields.io/github/v/release/smileidentity/ios-spm?label=release&logo=swift&logoColor=white&color=success)](https://github.com/smileidentity/ios-spm/releases/latest)
+[![Snapshot](https://img.shields.io/github/v/release/smileidentity/ios-spm?include_prereleases&sort=date&label=snapshot&logo=github&logoColor=white&color=blue)](https://github.com/smileidentity/ios-spm/releases)
+[![iOS](https://img.shields.io/badge/iOS-15.0%2B-blue?logo=apple&logoColor=white)](#requirements)
+[![Swift](https://img.shields.io/badge/Swift-6.0%2B-F05138?logo=swift&logoColor=white)](#requirements)
+[![Xcode](https://img.shields.io/badge/Xcode-16%2B-147EFB?logo=xcode&logoColor=white)](#requirements)
+
 Swift Package Manager distribution for the **Smile ID iOS SDK (v12)**. This repository hosts the
 `Package.swift` manifest and the pre-built XCFramework binaries that partner apps integrate against.
 The SDK lets you embed identity-verification flows into your SwiftUI app using a type-safe DSL builder.
@@ -23,15 +29,14 @@ Or add it to your own `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/smileidentity/ios-spm", exact: "12.0.0-beta01")
+    .package(url: "https://github.com/smileidentity/ios-spm", from: "12.0.0")
 ]
 ```
 
 Then add the `UseSmileID` product to your target's dependencies.
 
-> **Beta:** `12.0.0-beta01` is a pre-release. Pin it with `exact:` as shown — Swift Package Manager
-> does not select pre-release versions through `from:`. To track the latest beta build instead,
-> depend on the rolling `snapshot` branch:
+> **Pre-release builds:** to track the rolling snapshot instead of a tagged release, depend on the
+> `snapshot` branch:
 >
 > ```swift
 > .package(url: "https://github.com/smileidentity/ios-spm", branch: "snapshot")
