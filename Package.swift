@@ -27,23 +27,23 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "UseSmileID",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0/UseSmileID.xcframework.zip",
-            checksum: "0d6d75c79c193ce856b14917f83b984a5473547d5c91bd5bf8087eb98f6add77"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1/UseSmileID.xcframework.zip",
+            checksum: "62041bb23048aea7586492a14cc15447922cabe6ca96c5a6a19e15527dfb87fb"
         ),
         .binaryTarget(
             name: "UseSmileIDBridge",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0/UseSmileIDBridge.xcframework.zip",
-            checksum: "bd80127c6076d9f5a68218b97304273608cb4836a6fb7909d22cf9e5efb4fd71"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1/UseSmileIDBridge.xcframework.zip",
+            checksum: "cca10b573a4428fcacb42f6bb8895e92efa94d092394f4f72b9bd85f3dd596d7"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionFace",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0/UseSmileIDVisionFace.xcframework.zip",
-            checksum: "bdbb27535a97c00de3860e052fec25e6fc8323a9e11b53c9f746f2d9f0887cf7"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1/UseSmileIDVisionFace.xcframework.zip",
+            checksum: "eb079bf5c7e070c53af31eec14042975d3982776c7d83e8f70148be1c3e47569"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionDocument",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.0/UseSmileIDVisionDocument.xcframework.zip",
-            checksum: "90469f58f86c2d8d17899c2b7fc3b100a01ec16daa49984b040982940659a4cc"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1/UseSmileIDVisionDocument.xcframework.zip",
+            checksum: "3983a13a3d8349128a26b6f15a6d4cb5a0d91d9d5d988a13b041e5f32e3b39ad"
         ),
     ]
 )
