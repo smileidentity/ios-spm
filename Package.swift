@@ -9,19 +9,19 @@ let package = Package(
     products: [
         .library(
             name: "UseSmileID",
-            targets: ["UseSmileID", "UseSmileIDBridge"]
+            targets: ["UseSmileID", "UseSmileIDBridge", "UseSmileIDLottieSupport", "UseSmileIDSentrySupport"]
         ),
         .library(
             name: "UseSmileIDBridge",
-            targets: ["UseSmileIDBridge"]
+            targets: ["UseSmileIDBridge", "UseSmileIDSentrySupport"]
         ),
         .library(
             name: "UseSmileIDVisionFace",
-            targets: ["UseSmileIDVisionFace", "UseSmileIDBridge"]
+            targets: ["UseSmileIDVisionFace", "UseSmileIDBridge", "UseSmileIDSentrySupport"]
         ),
         .library(
             name: "UseSmileIDVisionDocument",
-            targets: ["UseSmileIDVisionDocument", "UseSmileIDBridge"]
+            targets: ["UseSmileIDVisionDocument", "UseSmileIDBridge", "UseSmileIDSentrySupport"]
         ),
     ],
     targets: [
@@ -44,6 +44,33 @@ let package = Package(
             name: "UseSmileIDVisionDocument",
             url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1/UseSmileIDVisionDocument.xcframework.zip",
             checksum: "3983a13a3d8349128a26b6f15a6d4cb5a0d91d9d5d988a13b041e5f32e3b39ad"
+        ),
+        // Same pinned release the xcframeworks above were built and linked against — the exact
+        // asset keeps the install name UseSmileID's binary already expects at runtime.
+        .binaryTarget(
+            name: "Lottie",
+            url: "https://github.com/airbnb/lottie-ios/releases/download/4.6.0/Lottie.xcframework.zip",
+            checksum: "45e1c5d7040654fe498f9bc6de99d88ae0092714fb9f424949850e1ad66217e4"
+        ),
+        // Dynamic variant (not the default static "Sentry.xcframework.zip"): UseSmileID and
+        // UseSmileIDBridge link Sentry without embedding it, so this must resolve at runtime
+        // instead of being duplicated statically into each binary.
+        .binaryTarget(
+            name: "Sentry",
+            url: "https://github.com/getsentry/sentry-cocoa/releases/download/9.8.0/Sentry-Dynamic.xcframework.zip",
+            checksum: "4950092e53801183beeffc15d20687ed18b95aa1cf3ba656ad37e8969f1086f1"
+        ),
+        // Binary targets can't declare dependencies, so this thin source target carries the
+        // Lottie dependency and gets included in every product that needs it embedded.
+        .target(
+            name: "UseSmileIDLottieSupport",
+            dependencies: ["Lottie"],
+            path: "Sources/UseSmileIDLottieSupport"
+        ),
+        .target(
+            name: "UseSmileIDSentrySupport",
+            dependencies: ["Sentry"],
+            path: "Sources/UseSmileIDSentrySupport"
         ),
     ]
 )
