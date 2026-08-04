@@ -45,31 +45,27 @@ let package = Package(
             url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1/UseSmileIDVisionDocument.xcframework.zip",
             checksum: "3983a13a3d8349128a26b6f15a6d4cb5a0d91d9d5d988a13b041e5f32e3b39ad"
         ),
-        // Same pinned release the xcframeworks above were built and linked against — the exact
-        // asset keeps the install name UseSmileID's binary already expects at runtime.
+        // Prefixed so this doesn't collide if a partner app also depends on lottie-ios directly.
         .binaryTarget(
-            name: "Lottie",
+            name: "UseSmileIDVendoredLottie",
             url: "https://github.com/airbnb/lottie-ios/releases/download/4.6.0/Lottie.xcframework.zip",
             checksum: "45e1c5d7040654fe498f9bc6de99d88ae0092714fb9f424949850e1ad66217e4"
         ),
-        // Dynamic variant (not the default static "Sentry.xcframework.zip"): UseSmileID and
-        // UseSmileIDBridge link Sentry without embedding it, so this must resolve at runtime
-        // instead of being duplicated statically into each binary.
+        // Dynamic, not the default static "Sentry.xcframework.zip" — UseSmileID/UseSmileIDBridge link Sentry without embedding it.
         .binaryTarget(
-            name: "Sentry",
+            name: "UseSmileIDVendoredSentry",
             url: "https://github.com/getsentry/sentry-cocoa/releases/download/9.8.0/Sentry-Dynamic.xcframework.zip",
             checksum: "4950092e53801183beeffc15d20687ed18b95aa1cf3ba656ad37e8969f1086f1"
         ),
-        // Binary targets can't declare dependencies, so this thin source target carries the
-        // Lottie dependency and gets included in every product that needs it embedded.
+        // Binary targets can't declare dependencies, so this carries the Lottie dependency into every product that needs it embedded.
         .target(
             name: "UseSmileIDLottieSupport",
-            dependencies: ["Lottie"],
+            dependencies: ["UseSmileIDVendoredLottie"],
             path: "Sources/UseSmileIDLottieSupport"
         ),
         .target(
             name: "UseSmileIDSentrySupport",
-            dependencies: ["Sentry"],
+            dependencies: ["UseSmileIDVendoredSentry"],
             path: "Sources/UseSmileIDSentrySupport"
         ),
     ]
