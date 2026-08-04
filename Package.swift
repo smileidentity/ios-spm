@@ -27,7 +27,7 @@ let package = Package(
     dependencies: [
         // lottie-spm wraps the same prebuilt dynamic Lottie.xcframework our xcframeworks link against — real package identity, so a partner depending on it too resolves to one shared copy.
         .package(url: "https://github.com/airbnb/lottie-spm", from: "4.6.0"),
-        // We need the dynamic "Sentry-Dynamic" product specifically; assumes Sentry's XCFrameworks stay ABI-stable across the 9.x line (library evolution), same as ours.
+        // Default static "Sentry" product: our binaries no longer link Sentry at all, so this compiles into the app like any other SPM source — a host on the same default product unifies on one package node.
         .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.8.0"),
     ],
     targets: [
@@ -59,7 +59,7 @@ let package = Package(
         ),
         .target(
             name: "UseSmileIDSentrySupport",
-            dependencies: [.product(name: "Sentry-Dynamic", package: "sentry-cocoa")],
+            dependencies: ["UseSmileIDBridge", .product(name: "Sentry", package: "sentry-cocoa")],
             path: "Sources/UseSmileIDSentrySupport"
         ),
     ]
