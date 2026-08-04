@@ -24,6 +24,12 @@ let package = Package(
             targets: ["UseSmileIDVisionDocument", "UseSmileIDBridge", "UseSmileIDSentrySupport"]
         ),
     ],
+    dependencies: [
+        // lottie-spm wraps the same prebuilt dynamic Lottie.xcframework our xcframeworks link against — real package identity, so a partner depending on it too resolves to one shared copy.
+        .package(url: "https://github.com/airbnb/lottie-spm", from: "4.6.0"),
+        // We need the dynamic "Sentry-Dynamic" product specifically; assumes Sentry's XCFrameworks stay ABI-stable across the 9.x line (library evolution), same as ours.
+        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.8.0"),
+    ],
     targets: [
         .binaryTarget(
             name: "UseSmileID",
@@ -45,27 +51,15 @@ let package = Package(
             url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1/UseSmileIDVisionDocument.xcframework.zip",
             checksum: "3983a13a3d8349128a26b6f15a6d4cb5a0d91d9d5d988a13b041e5f32e3b39ad"
         ),
-        // Prefixed so this doesn't collide if a partner app also depends on lottie-ios directly.
-        .binaryTarget(
-            name: "UseSmileIDVendoredLottie",
-            url: "https://github.com/airbnb/lottie-ios/releases/download/4.6.0/Lottie.xcframework.zip",
-            checksum: "45e1c5d7040654fe498f9bc6de99d88ae0092714fb9f424949850e1ad66217e4"
-        ),
-        // Dynamic, not the default static "Sentry.xcframework.zip" — UseSmileID/UseSmileIDBridge link Sentry without embedding it.
-        .binaryTarget(
-            name: "UseSmileIDVendoredSentry",
-            url: "https://github.com/getsentry/sentry-cocoa/releases/download/9.8.0/Sentry-Dynamic.xcframework.zip",
-            checksum: "4950092e53801183beeffc15d20687ed18b95aa1cf3ba656ad37e8969f1086f1"
-        ),
-        // Binary targets can't declare dependencies, so this carries the Lottie dependency into every product that needs it embedded.
+        // Carries the real package dependencies — binary targets can't declare dependencies themselves.
         .target(
             name: "UseSmileIDLottieSupport",
-            dependencies: ["UseSmileIDVendoredLottie"],
+            dependencies: [.product(name: "Lottie", package: "lottie-spm")],
             path: "Sources/UseSmileIDLottieSupport"
         ),
         .target(
             name: "UseSmileIDSentrySupport",
-            dependencies: ["UseSmileIDVendoredSentry"],
+            dependencies: [.product(name: "Sentry-Dynamic", package: "sentry-cocoa")],
             path: "Sources/UseSmileIDSentrySupport"
         ),
     ]
