@@ -2,36 +2,24 @@ import UIKit
 @_spi(CrashReportingSeam) import UseSmileIDBridge
 internal import Sentry
 
-/// The real, Sentry-backed crash reporting implementation. Lives in the source layer (ships via
-/// SPM, compiled by the partner's own build) rather than in the compiled xcframework, so the
-/// binary never embeds or links Sentry — see `UseSmileIDCrashReporting`'s doc comment for why.
-///
-/// `@objc`-named and `NSObject`-derived so `UseSmileIDCrashReporting` can find and instantiate it
-/// via `NSClassFromString` on first use — nothing else needs to touch this type directly. Keep
-/// the `@objc` name in sync with `UseSmileIDCrashReporting.handlerClassName`.
+/// The Sentry-backed handler, shipped in the SPM source layer so the compiled binary never links
+/// Sentry. Discovered via `NSClassFromString` — keep the `@objc` name in sync with
+/// `UseSmileIDCrashReporting.handlerClassName`.
 @objc(UseSmileIDSentryCrashReportingHandler)
 final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashReportingHandler {
-  /// Hardcoded so this module doesn't depend on `UseSmileIDMetadataFactory`
-  /// (which lives in the main `UseSmileID` framework and would create a
-  /// dependency cycle). Bump in lockstep with
-  /// `UseSmileIDMetadataFactory.sdkVersion` at release time.
-  private static let sdkVersion = "12.0.1"
+  /// Hardcoded — depending on `UseSmileIDMetadataFactory` would be a cycle; bump in lockstep with its `sdkVersion`.
+  private static let sdkVersion = "12.0.2" // x-release-please-version
 
-  /// Substring matched against `package` / `function` of every stack frame
-  /// to decide whether an event originated in SmileID code. Every SmileID
-  /// type and binary image carries the `UseSmileID` prefix.
+  /// Substring matched against stack-frame `package`/`function` to tag SmileID-origin events.
   private static let smileIDMarker = "UseSmileID"
 
   private var level: UseSmileIDCrashReporting.Level = .info
 
-  // Guards `hub` for concurrent access from background callers (camera queue, frame
-  // storage actor, etc.). Sentry-Cocoa's hub mutation APIs are internally thread-safe, but the
-  // slot held here is plain mutable state — protect it with a serial lock.
+  // Plain mutable state read from background callers — guarded by `hubLock`.
   private nonisolated(unsafe) var hub: SentryHub?
   private let hubLock = NSLock()
 
-  /// `true` when the active flow talks to the sandbox environment. Sandbox
-  /// traffic is test data and must not reach the production Sentry project.
+  /// Sandbox traffic is test data and must not reach the production Sentry project. Guarded by `hubLock`.
   private nonisolated(unsafe) var environmentIsSandbox = false
 
   private func currentHub() -> SentryHub? {
@@ -48,13 +36,10 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
     enable(dsn: ArkanaKeys.Global().sENTRY_DSN, useSandbox: useSandbox)
   }
 
-  /// Split out so a deterministic DSN can drive the hub creation directly (see
-  /// `UseSmileIDSentryCrashReportingHandlerTests`) — the public path always reads Arkana's.
+  /// Seam for tests to inject a deterministic DSN; the public path reads Arkana's.
   func enable(dsn: String, useSandbox: Bool = false) {
     guard !dsn.isEmpty else {
-      // Degrade gracefully when the DSN is absent (e.g. local snapshot
-      // builds without Arkana run). Crash reporting is silently disabled
-      // rather than failing to build the hub.
+      // No DSN (e.g. a local build without Arkana) silently disables reporting.
       return
     }
 
@@ -67,20 +52,10 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
     options.dsn = dsn
     options.releaseName = Self.sdkVersion
     options.environment = useSandbox ? "sandbox" : "production"
-    // Reporting is handled-errors-only: the SDK forwards caught errors via
-    // `captureException`. Native crash capture is intentionally NOT enabled —
-    // `enableCrashHandler` only installs KSCrash inside `SentrySDK.start`,
-    // which an embedded SDK must never call (it would seize the process-wide
-    // crash handler and capture the partner app's crashes). Left explicitly
-    // `false` so this stays clear.
+    // Handled-errors-only: never enable the crash handler — installing KSCrash would seize
+    // the partner app's process-wide crash reporting.
     options.enableCrashHandler = false
-    // Egress policy in `beforeSend`, in order:
-    //   1. drop everything from debug (SDK-dev/sample/test) builds and from
-    //      sandbox traffic so only production events reach the prod DSN
-    //   2. drop events without a `UseSmileID*` frame (partner-only errors)
-    //   3. throttle repeat fingerprints (`UseSmileIDCrashReporting.shouldReport`)
-    //   4. redact known PII tokens (emails, JWTs, bearer tokens, phone
-    //      numbers) from message + exception values + breadcrumbs + tags/extra
+    // Egress gate: drop debug/sandbox events, require a SmileID frame, throttle repeats, redact PII.
     options.beforeSend = { [weak self] event in
       #if DEBUG
         return nil
@@ -102,10 +77,7 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
       #endif
     }
 
-    // `UIDevice.current` is `@MainActor`-isolated. `enable()` is called
-    // from the flow builder which runs on the main actor, so the values
-    // are safe to read via `MainActor.assumeIsolated`. Reading them once
-    // here also keeps the scope-mutation block off the main actor.
+    // `UIDevice.current` is main-actor-isolated and `enable()` runs on the main actor — read once here.
     let deviceModel = MainActor.assumeIsolated { UIDevice.current.model }
     let osVersion = MainActor.assumeIsolated { UIDevice.current.systemVersion }
 
@@ -133,10 +105,7 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
 
   func captureException(_ error: Error) {
     guard let hub = currentHub() else { return }
-    // Sentry-Cocoa's `capture(error:)` is bridged from
-    // `-(SentryId *)captureError:(NSError *)error`, so it wants an
-    // `NSError`. Swift bridges any `Error` to `NSError` automatically
-    // via `_ObjectiveCBridgeable`; the cast always succeeds.
+    // Sentry's ObjC `captureError:` wants an `NSError`; Swift's bridging cast always succeeds.
     _ = hub.capture(error: error as NSError)
   }
 
@@ -172,8 +141,7 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
     }
   }
 
-  /// Returns `true` when any stack frame in `event` originates from a
-  /// `UseSmileID*` binary image / function.
+  /// Whether any stack frame in `event` originates from a `UseSmileID*` image or function.
   private func isCausedBySmileID(_ event: Event) -> Bool {
     // Exceptions carry frames for events captured via `hub.capture(error:)`.
     if let exceptions = event.exceptions {
@@ -205,8 +173,7 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
 
   private func fingerprint(for event: Event) -> String {
     if let exception = event.exceptions?.first {
-      // type and value are both nullable; fall back to stable placeholders so
-      // distinct nil-metadata events don't collapse into one throttle bucket.
+      // Stable placeholders so distinct nil-metadata events don't share one throttle bucket.
       return "\(exception.type ?? "unknown")|\(exception.value ?? "")"
     }
     return event.message?.formatted ?? ""
@@ -255,8 +222,7 @@ extension UseSmileIDCrashReporting.Level {
     case .warning: .warning
     case .info: .info
     case .debug: .debug
-    // `Level` is public in a library-evolution module, so a different-module switch must
-    // handle cases added in a future SDK version — treat anything new as informational.
+    // Library-evolution enum — map cases added in a future SDK version to informational.
     @unknown default: .info
     }
   }

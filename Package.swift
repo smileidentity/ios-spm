@@ -28,28 +28,30 @@ let package = Package(
         // lottie-spm wraps the same prebuilt dynamic Lottie.xcframework our xcframeworks link against — real package identity, so a partner depending on it too resolves to one shared copy.
         .package(url: "https://github.com/airbnb/lottie-spm", from: "4.6.0"),
         // Default static "Sentry" product: our binaries no longer link Sentry at all, so this compiles into the app like any other SPM source — a host on the same default product unifies on one package node.
-        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.8.0"),
+        // Floor 8.58.4: the lowest sentry-cocoa that builds under current SwiftPM, and the exact
+        // version sentry_flutter 9.25+ pins — a narrower window fails partner graphs at resolution.
+        .package(url: "https://github.com/getsentry/sentry-cocoa", "8.58.4"..<"10.0.0"),
     ],
     targets: [
         .binaryTarget(
             name: "UseSmileID",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1-SNAPSHOT.20260804173439.30934202444/UseSmileID.xcframework.zip",
-            checksum: "d51c026fd1e229df6b5728265caf90d8bffa975380266834fc61bb1187dc0284"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.2/UseSmileID.xcframework.zip",
+            checksum: "b234fbc0d4ba892ee0476c7dad746e5d5a934b6683b38e5e32e9a5d896098c05"
         ),
         .binaryTarget(
             name: "UseSmileIDBridge",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1-SNAPSHOT.20260804173439.30934202444/UseSmileIDBridge.xcframework.zip",
-            checksum: "aca4d7b9007aa5b448312661d3df8290ccb3940b92486a3f8db2739757daed7d"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.2/UseSmileIDBridge.xcframework.zip",
+            checksum: "1be7429c4dc5c840f40408afe511cc59fae64536382cbfa12c62dbf78341a372"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionFace",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1-SNAPSHOT.20260804173439.30934202444/UseSmileIDVisionFace.xcframework.zip",
-            checksum: "5131e36297a73f41764798ccf51459af0a38a97046b1a74094707ce2f4cadaba"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.2/UseSmileIDVisionFace.xcframework.zip",
+            checksum: "a6cdb7050844ef3381e8a8bff2eb19feb54018e4d8b4f459a24a34184c8a62b8"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionDocument",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.1-SNAPSHOT.20260804173439.30934202444/UseSmileIDVisionDocument.xcframework.zip",
-            checksum: "8f7cbf4f65b6bb85c3a2c08c1045e4abb9c388a836df8eabe638fd0506c8dbb3"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.0.2/UseSmileIDVisionDocument.xcframework.zip",
+            checksum: "30dc3a43e8654091af078b3e3c9def1b8fd47548616611d788eea7ac471c53c1"
         ),
         // Carries the real package dependencies — binary targets can't declare dependencies themselves.
         .target(
