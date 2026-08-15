@@ -28,7 +28,9 @@ let package = Package(
         // lottie-spm wraps the same prebuilt dynamic Lottie.xcframework our xcframeworks link against — real package identity, so a partner depending on it too resolves to one shared copy.
         .package(url: "https://github.com/airbnb/lottie-spm", from: "4.6.0"),
         // Default static "Sentry" product: our binaries no longer link Sentry at all, so this compiles into the app like any other SPM source — a host on the same default product unifies on one package node.
-        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.8.0"),
+        // Floor 8.58.4: the lowest sentry-cocoa that builds under current SwiftPM, and the exact
+        // version sentry_flutter 9.25+ pins — a narrower window fails partner graphs at resolution.
+        .package(url: "https://github.com/getsentry/sentry-cocoa", "8.58.4"..<"10.0.0"),
     ],
     targets: [
         .binaryTarget(
