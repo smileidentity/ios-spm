@@ -1,6 +1,6 @@
-internal import Sentry
 import UIKit
 @_spi(CrashReportingSeam) import UseSmileIDBridge
+internal import Sentry
 
 /// The Sentry-backed handler, shipped in the SPM source layer so the compiled binary never links
 /// Sentry. Discovered via `NSClassFromString` — keep the `@objc` name in sync with
@@ -213,8 +213,8 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
   }
 }
 
-private extension UseSmileIDCrashReporting.Level {
-  var sentryLevel: SentryLevel {
+extension UseSmileIDCrashReporting.Level {
+  fileprivate var sentryLevel: SentryLevel {
     switch self {
     case .fatal: .fatal
     case .error: .error
