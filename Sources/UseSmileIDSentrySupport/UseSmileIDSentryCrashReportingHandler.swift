@@ -9,7 +9,7 @@ import UIKit
 final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashReportingHandler,
   @unchecked Sendable {
   /// Hardcoded — depending on `UseSmileIDMetadataFactory` would be a cycle; bump in lockstep with its `sdkVersion`.
-  private static let sdkVersion = "12.0.2" // x-release-please-version
+  private static let sdkVersion = "12.1.0" // x-release-please-version
 
   /// Substring matched against stack-frame `package`/`function` to tag SmileID-origin events.
   private static let smileIDMarker = "UseSmileID"
