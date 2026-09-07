@@ -9,19 +9,19 @@ let package = Package(
     products: [
         .library(
             name: "UseSmileID",
-            targets: ["UseSmileID", "UseSmileIDBridge", "UseSmileIDLottieSupport", "UseSmileIDSentrySupport"]
+            targets: ["UseSmileID", "UseSmileIDBridge", "UseSmileIDLottieSupport", "UseSmileIDSentrySupport", "UseSmileIDKameraSupport"]
         ),
         .library(
             name: "UseSmileIDBridge",
-            targets: ["UseSmileIDBridge", "UseSmileIDSentrySupport"]
+            targets: ["UseSmileIDBridge", "UseSmileIDSentrySupport", "UseSmileIDKameraSupport"]
         ),
         .library(
             name: "UseSmileIDVisionFace",
-            targets: ["UseSmileIDVisionFace", "UseSmileIDBridge", "UseSmileIDSentrySupport"]
+            targets: ["UseSmileIDVisionFace", "UseSmileIDBridge", "UseSmileIDSentrySupport", "UseSmileIDKameraSupport"]
         ),
         .library(
             name: "UseSmileIDVisionDocument",
-            targets: ["UseSmileIDVisionDocument", "UseSmileIDBridge", "UseSmileIDSentrySupport"]
+            targets: ["UseSmileIDVisionDocument", "UseSmileIDBridge", "UseSmileIDSentrySupport", "UseSmileIDKameraSupport"]
         ),
     ],
     dependencies: [
@@ -31,6 +31,12 @@ let package = Package(
         // Floor 8.58.4: the lowest sentry-cocoa that builds under current SwiftPM, and the exact
         // version sentry_flutter 9.25+ pins — a narrower window fails partner graphs at resolution.
         .package(url: "https://github.com/getsentry/sentry-cocoa", "8.58.4"..<"10.0.0"),
+        // Kamera is the SDK's camera engine. UseSmileID.framework and UseSmileIDBridge.framework link
+        // Kamera.framework dynamically (`@rpath/Kamera.framework/Kamera`), so the app must embed it —
+        // a binary target cannot declare that, hence the UseSmileIDKameraSupport shim below. The exact
+        // pin is rewritten on every publish from the ios-v12 Bridge project's kamera-spm pin
+        // (Scripts/publish_spm.sh), so partners resolve the Kamera the xcframeworks were built against.
+        .package(url: "https://github.com/smileidentity/kamera-spm", exact: "1.0.4"),
     ],
     targets: [
         .binaryTarget(
@@ -63,6 +69,11 @@ let package = Package(
             name: "UseSmileIDSentrySupport",
             dependencies: ["UseSmileIDBridge", .product(name: "Sentry", package: "sentry-cocoa")],
             path: "Sources/UseSmileIDSentrySupport"
+        ),
+        .target(
+            name: "UseSmileIDKameraSupport",
+            dependencies: [.product(name: "Kamera", package: "kamera-spm")],
+            path: "Sources/UseSmileIDKameraSupport"
         ),
     ]
 )
