@@ -1,19 +1,18 @@
+internal import Sentry
 import UIKit
 @_spi(CrashReportingSeam) import UseSmileIDBridge
-internal import Sentry
 
 /// The Sentry-backed handler, shipped in the SPM source layer so the compiled binary never links
 /// Sentry. Discovered via `NSClassFromString` — keep the `@objc` name in sync with
 /// `UseSmileIDCrashReporting.handlerClassName`.
 @objc(UseSmileIDSentryCrashReportingHandler)
-final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashReportingHandler {
+final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashReportingHandler,
+  @unchecked Sendable {
   /// Hardcoded — depending on `UseSmileIDMetadataFactory` would be a cycle; bump in lockstep with its `sdkVersion`.
-  private static let sdkVersion = "12.0.2" // x-release-please-version
+  private static let sdkVersion = "12.1.0" // x-release-please-version
 
   /// Substring matched against stack-frame `package`/`function` to tag SmileID-origin events.
   private static let smileIDMarker = "UseSmileID"
-
-  private var level: UseSmileIDCrashReporting.Level = .info
 
   // Plain mutable state read from background callers — guarded by `hubLock`.
   private nonisolated(unsafe) var hub: SentryHub?
@@ -214,8 +213,8 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
   }
 }
 
-extension UseSmileIDCrashReporting.Level {
-  fileprivate var sentryLevel: SentryLevel {
+private extension UseSmileIDCrashReporting.Level {
+  var sentryLevel: SentryLevel {
     switch self {
     case .fatal: .fatal
     case .error: .error
