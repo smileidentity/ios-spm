@@ -140,6 +140,13 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
     }
   }
 
+  func removeContextTag(_ key: String) {
+    guard let hub = currentHub() else { return }
+    hub.configureScope { scope in
+      scope.removeTag(key: key)
+    }
+  }
+
   /// Whether any stack frame in `event` originates from a `UseSmileID*` image or function.
   private func isCausedBySmileID(_ event: Event) -> Bool {
     // Exceptions carry frames for events captured via `hub.capture(error:)`.
