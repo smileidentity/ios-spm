@@ -9,7 +9,7 @@ import UIKit
 final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashReportingHandler,
   @unchecked Sendable {
   /// Hardcoded — depending on `UseSmileIDMetadataFactory` would be a cycle; bump in lockstep with its `sdkVersion`.
-  private static let sdkVersion = "12.1.1" // x-release-please-version
+  private static let sdkVersion = "12.2.0" // x-release-please-version
 
   /// Substring matched against stack-frame `package`/`function` to tag SmileID-origin events.
   private static let smileIDMarker = "UseSmileID"
@@ -137,6 +137,13 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
     guard let hub = currentHub() else { return }
     hub.configureScope { scope in
       scope.setTag(value: value, key: key)
+    }
+  }
+
+  func removeContextTag(_ key: String) {
+    guard let hub = currentHub() else { return }
+    hub.configureScope { scope in
+      scope.removeTag(key: key)
     }
   }
 
