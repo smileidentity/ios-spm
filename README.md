@@ -1,68 +1,31 @@
-# Smile ID iOS SDK — Swift Package
+# Smile ID iOS SDK, the Swift package
 
-[![Release](https://img.shields.io/github/v/release/smileidentity/ios-spm?label=release&logo=swift&logoColor=white&color=success)](https://github.com/smileidentity/ios-spm/releases/latest)
-[![Snapshot](https://img.shields.io/github/v/release/smileidentity/ios-spm?include_prereleases&sort=date&label=snapshot&logo=github&logoColor=white&color=blue)](https://github.com/smileidentity/ios-spm/releases)
-[![iOS](https://img.shields.io/badge/iOS-15.0%2B-blue?logo=apple&logoColor=white)](#requirements)
-[![Swift](https://img.shields.io/badge/Swift-6.0%2B-F05138?logo=swift&logoColor=white)](#requirements)
-[![Xcode](https://img.shields.io/badge/Xcode-16%2B-147EFB?logo=xcode&logoColor=white)](#requirements)
+The Swift Package Manager distribution of the **Smile ID iOS SDK**: identity verification flows for
+your SwiftUI app.
 
-Swift Package Manager distribution for the **Smile ID iOS SDK (v12)**. This repository hosts the
-`Package.swift` manifest and the pre-built XCFramework binaries that partner apps integrate against.
-The SDK lets you embed identity-verification flows into your SwiftUI app using a type-safe DSL builder.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/spm-install-dark.svg">
+  <img alt="Three steps. Add the package github.com/smileidentity/ios-spm in Xcode, up to the next major version. Tick the UseSmileID product; UseSmileIDVisionFace is optional; UseSmileIDVisionDocument is optional. Then import UseSmileID, and the build succeeds." src="assets/readme/spm-install-light.svg">
+</picture>
 
-## Requirements
-
-- iOS 15.0+
-- Swift 6.0+ (Xcode 16+)
-
-## Installation
-
-### Swift Package Manager
-
-In Xcode, choose **File → Add Package Dependencies…** and enter:
-
-```
-https://github.com/smileidentity/ios-spm
-```
-
-Or add it to your own `Package.swift`:
+## Install
 
 ```swift
-dependencies: [
-    .package(url: "https://github.com/smileidentity/ios-spm", from: "12.0.0")
-]
+.package(url: "https://github.com/smileidentity/ios-spm", from: "12.2.0")
 ```
 
-Then add the `UseSmileID` product to your target's dependencies.
+| Product | For |
+|---|---|
+| `UseSmileID` | the SDK. Start here; it brings in `UseSmileIDBridge` |
+| `UseSmileIDVisionFace` | the Apple Vision face analyzer, optional |
+| `UseSmileIDVisionDocument` | the Apple Vision document analyzer, optional |
 
-> **Pre-release builds:** to track the rolling snapshot instead of a tagged release, depend on the
-> `snapshot` branch:
->
-> ```swift
-> .package(url: "https://github.com/smileidentity/ios-spm", branch: "snapshot")
-> ```
+iOS 15 or later · Swift tools 6.0 · built with Xcode 26.4
 
-## Products
+## Docs and releases
 
-| Product | Use it for |
-|---------|------------|
-| `UseSmileID` | Core SDK — UI flows, the DSL builder, networking, capture. Start here; it includes `UseSmileIDBridge`. |
-| `UseSmileIDBridge` | ML abstractions and shared model types (transitively included by `UseSmileID`). |
-| `UseSmileIDVisionFace` | Apple Vision face-detection analyzer. |
-| `UseSmileIDVisionDocument` | Apple Vision document-detection analyzer. |
+The [Smile ID documentation](https://docs.usesmileid.com) has the integration guides.
+[Releases](https://github.com/smileidentity/ios-spm/releases) lists every version. A snapshot is
+for testing only, and the `snapshot` branch follows the newest.
 
-Most integrations only need `UseSmileID`. Add the `UseSmileIDVision*` products if you wire up the
-Vision-based analyzers directly.
-
-```swift
-import SwiftUI
-import UseSmileID
-```
-
-## Documentation
-
-Integration guides and API documentation are available in the [Smile ID documentation](https://docs.usesmileid.com).
-
-## License
-
-Released under the MIT License. See [LICENSE](LICENSE).
+MIT licensed. See [LICENSE](LICENSE).
