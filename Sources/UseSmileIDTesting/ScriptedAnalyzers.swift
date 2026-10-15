@@ -3,7 +3,7 @@
   import UseSmileIDBridge
 
   /// Deterministic analyzer that ignores real camera frames and replays a `ScriptedScenario`
-  /// instead (kamera design 64, D3). Moved here from the sample's E2E harness. Registered through the public `ml { }` DSL, so the whole flow — screens,
+  /// instead. Registered through the public `ml { }` DSL, so the whole flow — screens,
   /// transitioners, frame persistence, submission — is the shipping code path; only the ML
   /// detection result is scripted.
   final class ScriptedFaceAnalyzer: Analyzer, @unchecked Sendable {

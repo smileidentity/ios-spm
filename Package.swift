@@ -23,8 +23,8 @@ let package = Package(
             name: "UseSmileIDVisionDocument",
             targets: ["UseSmileIDVisionDocument", "UseSmileIDBridge", "UseSmileIDSentrySupport", "UseSmileIDKameraSupport"]
         ),
-        // The test doubles a partner links into their app's Debug build (docs/Testing-Your-Integration.md
-        // in ios-v12). Every type in it compiles only under DEBUG, so a Release build links an empty module.
+        // The test doubles a partner links into their app (docs/Testing-Your-Integration.md in ios-v12).
+        // A test starts only under DEBUG, so a launch argument can't turn a Release build into a test run.
         .library(
             name: "UseSmileIDTesting",
             targets: ["UseSmileIDTesting"]
