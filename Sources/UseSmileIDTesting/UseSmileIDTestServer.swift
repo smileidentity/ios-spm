@@ -58,6 +58,10 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
     listener.start(queue: queue)
   }
 
+  deinit {
+    listener.cancel()
+  }
+
   /// Stops listening. Requests after this are refused before they leave the process.
   public func close() {
     let waiting: [CheckedContinuation<UInt16?, Never>] = lock.withLock {
@@ -117,12 +121,31 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
     }
   }
 
+  /// What a listener's state means for the requests waiting on its port.
+  enum Readiness: Equatable {
+    case pending
+    case ready(UInt16)
+    case failed
+  }
+
+  /// A listener that is ready answers on its port. One that is waiting, for a network it can't
+  /// have on loopback, fails like one that failed, so requests are refused rather than held.
+  static func readiness(of state: NWListener.State, port: UInt16?) -> Readiness {
+    switch state {
+    case .ready: port.map(Readiness.ready) ?? .failed
+    case .waiting, .failed, .cancelled: .failed
+    default: .pending
+    }
+  }
+
   private func listenerChanged(_ newState: NWListener.State) {
     let port: UInt16?
-    switch newState {
-    case .ready: port = listener.port?.rawValue
-    case .failed, .cancelled: port = nil
-    default: return
+    switch Self.readiness(of: newState, port: listener.port?.rawValue) {
+    case .pending: return
+    case .ready(let readyPort): port = readyPort
+    case .failed:
+      port = nil
+      listener.cancel()
     }
     let waiting: [CheckedContinuation<UInt16?, Never>] = lock.withLock {
       guard case .starting(let waiting) = state else { return [] }
