@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smileidentity.com/e2e-scenarios/schema.json",
+  "title": "SmileID scripted E2E scenario",
+  "description": "Platform-neutral script replayed by each SDK's deterministic fake analyzer. One step = one detection result held for `holdFrames` analyzer invocations. Times ride `holdFrames`, never milliseconds, so the same file drives Android, iOS, Flutter, and React Native. The final step repeats indefinitely once its holdFrames are exhausted, so scenarios stay agnostic of each platform's sample-count and timeout configuration.",
+  "type": "object",
+  "required": ["name", "captureType", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Scenario id; matches the file name without extension."
+    },
+    "captureType": {
+      "enum": ["selfie", "document"]
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["emit"],
+        "additionalProperties": false,
+        "properties": {
+          "emit": {
+            "enum": [
+              "noFace",
+              "faceTooFar",
+              "faceCentered",
+              "headTurnLeft",
+              "headTurnRight",
+              "headTurnUp",
+              "satisfied",
+              "noDocument",
+              "documentFound",
+              "documentUnstable"
+            ],
+            "description": "Detection state the fake analyzer materialises into its platform's real analyzer-output type. `satisfied` re-emits the last valid detection until the platform's transitioner reaches its Satisfied state on its own."
+          },
+          "holdFrames": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1,
+            "description": "Number of consecutive analyzer invocations that return this step's output."
+          },
+          "extras": {
+            "type": "object",
+            "description": "Optional per-step hints (e.g. directionProgress ramp values). Platforms that derive the value internally ignore extras.",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Capture-scoped expectations shared by every platform runner. Screen names and event names use the analytics registry values that all four SDKs emit (docs/Analytics.md in each repo). Job-type-specific expectations (endpoint, params) live in the platform test, not here.",
+      "properties": {
+        "screens": {
+          "type": "array",
+          "items": {
+            "enum": ["consent", "instructions", "capture", "preview", "processing"]
+          },
+          "description": "Ordered screen_viewed sequence for the canonical consent-first flow."
+        },
+        "events": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ordered analytics event types that must fire (subset match: listed events must appear in this order; unlisted events may interleave)."
+        },
+        "terminal": {
+          "enum": ["submitted", "captured", "running", "unsatisfied"],
+          "description": "How the capture session ends. `submitted` = flow reaches processing and submits the job; `captured` = flow reaches processing and hands the assembled job to the partner without submitting (skipApiSubmission); `running` = capture keeps looking until the user leaves, since a selfie or document capture has no time limit; `unsatisfied` = capture repeatedly restarts without completing."
+        }
+      }
+    }
+  }
+}

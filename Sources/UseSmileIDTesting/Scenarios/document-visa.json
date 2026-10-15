@@ -1,0 +1,25 @@
+{
+  "name": "document-visa",
+  "captureType": "document",
+  "steps": [
+    { "emit": "noDocument", "holdFrames": 10 },
+    { "emit": "documentFound", "holdFrames": 30 },
+    { "emit": "satisfied", "holdFrames": 60 },
+    { "emit": "noDocument", "holdFrames": 10 },
+    { "emit": "documentUnstable", "holdFrames": 15 },
+    { "emit": "documentFound", "holdFrames": 30 },
+    { "emit": "satisfied" }
+  ],
+  "expected": {
+    "screens": ["consent", "instructions", "capture", "preview", "processing"],
+    "events": [
+      "flow_started",
+      "consent_captured",
+      "document_captured",
+      "document_captured",
+      "job_submitted",
+      "flow_completed"
+    ],
+    "terminal": "submitted"
+  }
+}

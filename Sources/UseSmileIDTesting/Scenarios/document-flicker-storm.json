@@ -1,0 +1,23 @@
+{
+  "name": "document-flicker-storm",
+  "captureType": "document",
+  "steps": [
+    { "emit": "documentFound", "holdFrames": 2 },
+    { "emit": "noDocument", "holdFrames": 5 },
+    { "emit": "documentFound", "holdFrames": 2 },
+    { "emit": "noDocument", "holdFrames": 5 },
+    { "emit": "documentFound", "holdFrames": 2 },
+    { "emit": "noDocument", "holdFrames": 5 },
+    { "emit": "documentFound", "holdFrames": 2 },
+    { "emit": "noDocument", "holdFrames": 5 },
+    { "emit": "documentFound", "holdFrames": 2 },
+    { "emit": "noDocument", "holdFrames": 5 },
+    { "emit": "documentFound", "holdFrames": 2 },
+    { "emit": "noDocument", "holdFrames": 5 }
+  ],
+  "expected": {
+    "screens": ["consent", "instructions", "capture"],
+    "events": ["flow_started", "consent_captured"],
+    "terminal": "unsatisfied"
+  }
+}
