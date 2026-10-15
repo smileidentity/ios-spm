@@ -1,0 +1,25 @@
+{
+  "name": "ess-head-turn-happy-path",
+  "captureType": "selfie",
+  "steps": [
+    { "emit": "faceCentered", "holdFrames": 60 },
+    { "emit": "headTurnLeft", "holdFrames": 20, "extras": { "directionProgress": "ramp" } },
+    { "emit": "faceCentered", "holdFrames": 10 },
+    { "emit": "headTurnRight", "holdFrames": 20, "extras": { "directionProgress": "ramp" } },
+    { "emit": "faceCentered", "holdFrames": 10 },
+    { "emit": "headTurnUp", "holdFrames": 20, "extras": { "directionProgress": "ramp" } },
+    { "emit": "faceCentered", "holdFrames": 10 },
+    { "emit": "satisfied" }
+  ],
+  "expected": {
+    "screens": ["consent", "instructions", "capture", "preview", "processing"],
+    "events": [
+      "flow_started",
+      "consent_captured",
+      "selfie_captured",
+      "job_submitted",
+      "flow_completed"
+    ],
+    "terminal": "submitted"
+  }
+}

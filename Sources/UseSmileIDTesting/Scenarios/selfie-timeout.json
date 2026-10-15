@@ -1,0 +1,12 @@
+{
+  "name": "selfie-timeout",
+  "captureType": "selfie",
+  "steps": [
+    { "emit": "noFace" }
+  ],
+  "expected": {
+    "screens": ["consent", "instructions", "capture"],
+    "events": ["flow_started", "consent_captured"],
+    "terminal": "running"
+  }
+}

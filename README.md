@@ -19,6 +19,7 @@ your SwiftUI app.
 | `UseSmileID` | the SDK. Start here; it brings in `UseSmileIDBridge` |
 | `UseSmileIDVisionFace` | the Apple Vision face analyzer, optional |
 | `UseSmileIDVisionDocument` | the Apple Vision document analyzer, optional |
+| `UseSmileIDTesting` | test doubles for your own UI tests: a scripted subject and an in-process backend. Its code compiles only in Debug builds |
 
 iOS 15 or later · Swift tools 6.0 · built with Xcode 26.4
 

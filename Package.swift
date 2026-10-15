@@ -23,6 +23,12 @@ let package = Package(
             name: "UseSmileIDVisionDocument",
             targets: ["UseSmileIDVisionDocument", "UseSmileIDBridge", "UseSmileIDSentrySupport", "UseSmileIDKameraSupport"]
         ),
+        // The test doubles a partner links into their app's Debug build (docs/Testing-Your-Integration.md
+        // in ios-v12). Every type in it compiles only under DEBUG, so a Release build links an empty module.
+        .library(
+            name: "UseSmileIDTesting",
+            targets: ["UseSmileIDTesting"]
+        ),
     ],
     dependencies: [
         // lottie-spm wraps the same prebuilt dynamic Lottie.xcframework our xcframeworks link against — real package identity, so a partner depending on it too resolves to one shared copy.
@@ -85,6 +91,22 @@ let package = Package(
             name: "UseSmileIDNjiaSupport",
             dependencies: [.product(name: "Njia", package: "njia-spm")],
             path: "Sources/UseSmileIDNjiaSupport"
+        ),
+        // Source, like UseSmileIDSentrySupport: synced from ios-v12's SPMSourceLayer on every publish, with
+        // the shared e2e scenarios as its resources. It depends on what the UseSmileID product does, so the
+        // binaries' own imports resolve.
+        .target(
+            name: "UseSmileIDTesting",
+            dependencies: [
+                "UseSmileID",
+                "UseSmileIDBridge",
+                "UseSmileIDLottieSupport",
+                "UseSmileIDSentrySupport",
+                "UseSmileIDKameraSupport",
+                "UseSmileIDNjiaSupport",
+            ],
+            path: "Sources/UseSmileIDTesting",
+            resources: [.copy("Scenarios")]
         ),
     ]
 )
