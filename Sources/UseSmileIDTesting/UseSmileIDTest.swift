@@ -10,8 +10,8 @@ import UseSmileIDBridge
 /// and the scripted analyzers aren't compiled, so a launch argument can't turn a Release build
 /// into a test run.
 ///
-/// Start one from a UI test's launch argument with `fromLaunchArguments()`, then wire it into the
-/// blocks your flow already writes:
+/// Start one from a UI test's launch argument with `fromLaunchArguments()`, once, when the app
+/// launches, then wire it into the blocks your flow already writes:
 ///
 /// ```swift
 /// builder.ml { ml in ml.analyzers { test.analyzers } }
@@ -55,24 +55,41 @@ public final class UseSmileIDTest: @unchecked Sendable {
     #endif
   }
 
-  /// The test the app was launched for, or nil when it was launched without `scenarioArgument`
-  /// or outside a Debug build.
+  /// The test the app was launched for, or nil when it was launched without `scenarioArgument` or
+  /// outside a Debug build. Make it once, when the app launches, and keep it: each test starts its
+  /// own server.
+  ///
+  /// When the arguments ask for a test it can't give, because they name no scenario or its server
+  /// can't start, it stops the app rather than return nil: the flow would otherwise run against
+  /// your real backend in a run meant to be isolated.
   public static func fromLaunchArguments(
     _ arguments: [String] = ProcessInfo.processInfo.arguments
   ) -> UseSmileIDTest? {
     #if DEBUG
-      func value(after argument: String) -> String? {
-        arguments.firstIndex(of: argument).flatMap { index in
-          arguments.indices.contains(index + 1) ? arguments[index + 1] : nil
-        }
+      do {
+        return try launched(by: arguments)
+      } catch {
+        preconditionFailure("\(error)")
       }
-      guard let name = value(after: scenarioArgument),
-            let scenario = UseSmileIDTestScenario.byName[name]?() else { return nil }
-      let aspectRatio = value(after: documentAspectRatioArgument).flatMap(Double.init)
-      return try? UseSmileIDTest(scenario: scenario, documentAspectRatio: aspectRatio)
     #else
       return nil
     #endif
+  }
+
+  /// The test `arguments` ask for, or nil when they ask for none.
+  static func launched(by arguments: [String]) throws -> UseSmileIDTest? {
+    func value(after argument: String) -> String? {
+      arguments.firstIndex(of: argument).flatMap { index in
+        arguments.indices.contains(index + 1) ? arguments[index + 1] : nil
+      }
+    }
+    guard arguments.contains(scenarioArgument) else { return nil }
+    let name = value(after: scenarioArgument) ?? ""
+    guard let scenario = UseSmileIDTestScenario.byName[name]?() else {
+      throw UseSmileIDTestError.unknownScenario(name)
+    }
+    let aspectRatio = value(after: documentAspectRatioArgument).flatMap(Double.init)
+    return try UseSmileIDTest(scenario: scenario, documentAspectRatio: aspectRatio)
   }
 
   /// Routes every request the flow makes to `server`, whatever its host. Call it inside
@@ -128,10 +145,13 @@ public final class UseSmileIDTest: @unchecked Sendable {
 public enum UseSmileIDTestError: Error, Equatable, CustomStringConvertible {
   /// `UseSmileIDTesting` was built without `DEBUG`, as a Release build is, where no test starts.
   case notADebugBuild
+  /// The launch arguments name no scenario `fromLaunchArguments()` knows.
+  case unknownScenario(String)
 
   public var description: String {
     switch self {
     case .notADebugBuild: "UseSmileIDTesting starts a test only in a Debug build"
+    case .unknownScenario(let name): "UseSmileIDTesting has no scenario named \"\(name)\""
     }
   }
 }

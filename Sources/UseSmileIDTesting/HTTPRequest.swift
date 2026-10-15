@@ -1,7 +1,7 @@
 import Foundation
 
-/// One HTTP/1.1 request as the test server received it: complete once its head and the body its
-/// `Content-Length` declares have arrived.
+/// One HTTP/1.1 request as the test server received it: complete once its head and its body have
+/// arrived, the body being the bytes its `Content-Length` declares or its chunks up to the last.
 struct HTTPRequest {
   let path: String
   let headers: [String: String]
@@ -17,12 +17,18 @@ struct HTTPRequest {
       let name = line[..<colon].trimmingCharacters(in: .whitespaces).lowercased()
       headers[name] = line[line.index(after: colon)...].trimmingCharacters(in: .whitespaces)
     }
-    let length = headers["content-length"].flatMap(Int.init) ?? 0
-    guard buffer.count - headEnd.upperBound >= length else { return nil }
+    let rest = buffer[headEnd.upperBound...]
+    if headers["transfer-encoding"]?.lowercased().contains("chunked") == true {
+      guard let body = rest.dechunked else { return nil }
+      self.body = body
+    } else {
+      let length = max(0, headers["content-length"].flatMap(Int.init) ?? 0)
+      guard rest.count >= length else { return nil }
+      body = Data(rest.prefix(length))
+    }
     let target = lines.first?.split(separator: " ").dropFirst().first.map(String.init) ?? "/"
     path = URLComponents(string: target)?.path ?? target
     self.headers = headers
-    body = buffer.subdata(in: headEnd.upperBound..<(headEnd.upperBound + length))
   }
 
   /// The request as a test reads it: its body un-gzipped and split into parts.
@@ -51,6 +57,27 @@ private extension String {
 }
 
 extension Data {
+  /// A chunked body's bytes once its last, empty chunk has arrived; nil until then (RFC 9112, 7.1).
+  var dechunked: Data? {
+    let crlf = Data("\r\n".utf8)
+    var body = Data()
+    var index = startIndex
+    while let lineEnd = range(of: crlf, in: index..<endIndex) {
+      let sizeField = String(decoding: self[index..<lineEnd.lowerBound], as: UTF8.self)
+        .split(separator: ";").first.map { $0.trimmingCharacters(in: .whitespaces) } ?? ""
+      guard let size = Int(sizeField, radix: 16), size >= 0 else { return nil }
+      if size == 0 {
+        return body
+      }
+      let chunkStart = lineEnd.upperBound
+      guard distance(from: chunkStart, to: endIndex) >= size + crlf.count else { return nil }
+      let chunkEnd = self.index(chunkStart, offsetBy: size)
+      body.append(self[chunkStart..<chunkEnd])
+      index = self.index(chunkEnd, offsetBy: crlf.count)
+    }
+    return nil
+  }
+
   /// A gzip member's payload, inflated; nil when this isn't gzip. Foundation's `.zlib` inflates raw
   /// DEFLATE, so the gzip header and trailer are stepped over by hand (RFC 1952).
   var gunzipped: Data? {
