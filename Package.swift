@@ -9,7 +9,7 @@ let package = Package(
     products: [
         .library(
             name: "UseSmileID",
-            targets: ["UseSmileID", "UseSmileIDBridge", "UseSmileIDLottieSupport", "UseSmileIDSentrySupport", "UseSmileIDKameraSupport"]
+            targets: ["UseSmileID", "UseSmileIDBridge", "UseSmileIDLottieSupport", "UseSmileIDSentrySupport", "UseSmileIDKameraSupport", "UseSmileIDNjiaSupport"]
         ),
         .library(
             name: "UseSmileIDBridge",
@@ -37,6 +37,12 @@ let package = Package(
         // pin is rewritten on every publish from the ios-v12 Bridge project's kamera-spm pin
         // (Scripts/publish_spm.sh), so partners resolve the Kamera the xcframeworks were built against.
         .package(url: "https://github.com/smileidentity/kamera-spm", exact: "1.2.0"),
+        // Njia is the navigation engine the SDK's flows run on. UseSmileID.framework links
+        // Njia.framework dynamically (`@rpath/Njia.framework/Njia`), so the app must embed it, as it
+        // does Kamera: hence the UseSmileIDNjiaSupport shim below. The exact pin is rewritten on every
+        // publish from the ios-v12 UseSmileID project's njia-spm pin (Scripts/publish_spm.sh), so
+        // partners resolve the Njia the xcframeworks were built against.
+        .package(url: "https://github.com/smileidentity/njia-spm", exact: "0.0.1-SNAPSHOT.3"),
     ],
     targets: [
         .binaryTarget(
@@ -74,6 +80,11 @@ let package = Package(
             name: "UseSmileIDKameraSupport",
             dependencies: [.product(name: "Kamera", package: "kamera-spm")],
             path: "Sources/UseSmileIDKameraSupport"
+        ),
+        .target(
+            name: "UseSmileIDNjiaSupport",
+            dependencies: [.product(name: "Njia", package: "njia-spm")],
+            path: "Sources/UseSmileIDNjiaSupport"
         ),
     ]
 )
