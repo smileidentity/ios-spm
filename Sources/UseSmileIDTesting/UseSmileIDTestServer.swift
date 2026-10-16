@@ -1,7 +1,7 @@
 import Foundation
 import Network
 import UseSmileID
-import UseSmileIDBridge
+@_spi(UseSmileIDInternal) import UseSmileIDBridge
 
 /// The Smile ID backend, in process, for a flow under test. Every `/v3` job
 /// endpoint answers the canonical accepted-job payload unless a test scripts something else with
@@ -97,13 +97,14 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
   }
 
   /// Sends every request to this server, whatever its host, so a custom base URL can't reach a live
-  /// backend from a test. Once the server is closed it refuses requests instead,
+  /// backend from a test. It is the SDK's test route: the SDK runs it innermost, below its guard, on
+  /// the sandbox only. Once the server is closed it refuses requests instead,
   /// naming the path and never printing the body.
   var router: Interceptor {
     Router(server: self)
   }
 
-  private struct Router: Interceptor {
+  private struct Router: UseSmileIDTestRoute {
     let server: UseSmileIDTestServer
 
     func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (URLResponse, Data) {
