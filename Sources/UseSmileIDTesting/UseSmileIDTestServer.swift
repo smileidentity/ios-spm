@@ -97,8 +97,8 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
   }
 
   /// Sends every request to this server, whatever its host, so a custom base URL can't reach a live
-  /// backend from a test. It is the SDK's test route: the SDK runs it innermost, below its guard, on
-  /// the sandbox only. Once the server is closed it refuses requests instead,
+  /// backend from a test. It is the SDK's test route: the SDK runs it innermost, below its guard, in a
+  /// debuggable app or on the sandbox only. Once the server is closed it refuses requests instead,
   /// naming the path and never printing the body.
   var router: Interceptor {
     Router(server: self)
