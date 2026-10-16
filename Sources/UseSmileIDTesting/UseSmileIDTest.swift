@@ -46,13 +46,10 @@ public final class UseSmileIDTest: @unchecked Sendable {
   ///     screen expects; nil frames an ID card. Only a document scenario reads it.
   /// - Throws: `UseSmileIDTestError.notADebugBuild` outside a Debug build.
   public init(scenario: UseSmileIDTestScenario, documentAspectRatio: Double? = nil) throws {
-    #if DEBUG
-      self.scenario = scenario
-      self.documentAspectRatio = documentAspectRatio
-      server = try UseSmileIDTestServer()
-    #else
-      throw UseSmileIDTestError.notADebugBuild
-    #endif
+    // The server starts only in a Debug build, and throws `notADebugBuild` elsewhere.
+    server = try UseSmileIDTestServer()
+    self.scenario = scenario
+    self.documentAspectRatio = documentAspectRatio
   }
 
   /// The test the app was launched for, or nil when it was launched without `scenarioArgument` or
