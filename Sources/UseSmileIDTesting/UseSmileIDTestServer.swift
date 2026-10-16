@@ -1,6 +1,7 @@
 import Foundation
 import Network
 import UseSmileID
+import UseSmileIDBridge
 
 /// The Smile ID backend, in process, for a flow under test. Every `/v3` job
 /// endpoint answers the canonical accepted-job payload unless a test scripts something else with
