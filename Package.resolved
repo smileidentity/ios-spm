@@ -1,0 +1,42 @@
+{
+  "originHash" : "aaa825194ccedbe3bfa78156708390ffd6e03029a4e91a61f4e6fce9973ec287",
+  "pins" : [
+    {
+      "identity" : "kamera-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/smileidentity/kamera-spm",
+      "state" : {
+        "revision" : "a6fde3d4c753e0bced93a2196cd311da135877a0",
+        "version" : "1.2.1-SNAPSHOT.22"
+      }
+    },
+    {
+      "identity" : "lottie-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/lottie-spm",
+      "state" : {
+        "revision" : "0aff16288f8dc1e3dab35cbf5cf45979673fd3df",
+        "version" : "4.6.1"
+      }
+    },
+    {
+      "identity" : "njia-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/smileidentity/njia-spm",
+      "state" : {
+        "revision" : "411fd3d9e295fef93e9720536227982a5816a98a",
+        "version" : "0.0.1-SNAPSHOT.3"
+      }
+    },
+    {
+      "identity" : "sentry-cocoa",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getsentry/sentry-cocoa",
+      "state" : {
+        "revision" : "4bb2282661ee6ca2212aa01d19a1214394cd3c45",
+        "version" : "9.30.2"
+      }
+    }
+  ],
+  "version" : 3
+}
