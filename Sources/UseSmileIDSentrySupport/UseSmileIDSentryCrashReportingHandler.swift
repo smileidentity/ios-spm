@@ -1,6 +1,6 @@
 internal import Sentry
 import UIKit
-@_spi(CrashReportingSeam) import UseSmileIDBridge
+@_spi(CrashReportingSeam) @_spi(UseSmileIDInternal) import UseSmileIDBridge
 
 /// The Sentry-backed handler, shipped in the SPM source layer so the compiled binary never links
 /// Sentry. Discovered via `NSClassFromString` — keep the `@objc` name in sync with
