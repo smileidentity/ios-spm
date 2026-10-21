@@ -53,18 +53,14 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
 
   /// Starts a server of your own, for a harness that doesn't use `UseSmileIDTest`. Install its
   /// `router` in `interceptors { }`, and close it when the test ends.
-  /// - Throws: `UseSmileIDTestError.notADebugBuild` outside a Debug build.
+  /// - Throws: when the listener can't start.
   public init() throws {
-    #if DEBUG
-      let parameters = NWParameters.tcp
-      parameters.requiredLocalEndpoint = .hostPort(host: .ipv4(.loopback), port: .any)
-      listener = try NWListener(using: parameters)
-      listener.stateUpdateHandler = { [weak self] state in self?.listenerChanged(state) }
-      listener.newConnectionHandler = { [weak self] connection in self?.serve(connection) }
-      listener.start(queue: queue)
-    #else
-      throw UseSmileIDTestError.notADebugBuild
-    #endif
+    let parameters = NWParameters.tcp
+    parameters.requiredLocalEndpoint = .hostPort(host: .ipv4(.loopback), port: .any)
+    listener = try NWListener(using: parameters)
+    listener.stateUpdateHandler = { [weak self] state in self?.listenerChanged(state) }
+    listener.newConnectionHandler = { [weak self] connection in self?.serve(connection) }
+    listener.start(queue: queue)
   }
 
   deinit {
