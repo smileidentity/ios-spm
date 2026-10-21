@@ -32,7 +32,7 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
   }
 
   func enable(useSandbox: Bool) {
-    enable(dsn: BridgeTables.Global().tableA, useSandbox: useSandbox)
+    enable(dsn: BridgeTables.Global().sENTRY_DSN, useSandbox: useSandbox)
   }
 
   /// Seam for tests to inject a deterministic DSN; the public path reads Arkana's.
