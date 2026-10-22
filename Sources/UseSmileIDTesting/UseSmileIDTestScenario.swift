@@ -59,11 +59,6 @@ public struct UseSmileIDTestScenario: Sendable {
     self.script = script
   }
 
-  /// The one of these seven scenarios whose JSON gives it `name`, such as `selfie-happy-path`, or nil.
-  public static func named(_ name: String) -> Self? {
-    byName.values.lazy.map { $0() }.first { $0.name == name }
-  }
-
   /// The bundled scenarios by the name `fromLaunchArguments()` reads.
   static let byName: [String: @Sendable () -> Self] = [
     "selfieHappyPath": { .selfieHappyPath },

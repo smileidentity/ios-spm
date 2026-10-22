@@ -23,7 +23,7 @@ import UseSmileIDBridge
 /// and show `UseSmileIDTestReport(test:)`, which your UI test reads. A unit test hosted in the app
 /// reads `server` directly.
 public final class UseSmileIDTest: @unchecked Sendable {
-  /// The launch argument `fromLaunchArguments()` reads: a `UseSmileIDTestScenario` name, or the name its JSON gives it.
+  /// The launch argument `fromLaunchArguments()` reads: one of the `UseSmileIDTestScenario` names.
   public static let scenarioArgument = "-UseSmileIDTestScenario"
   /// The launch argument for `documentAspectRatio`, such as `0.71` for a passport.
   public static let documentAspectRatioArgument = "-UseSmileIDTestDocumentAspectRatio"
@@ -80,7 +80,7 @@ public final class UseSmileIDTest: @unchecked Sendable {
     }
     guard arguments.contains(scenarioArgument) else { return nil }
     let name = value(after: scenarioArgument) ?? ""
-    guard let scenario = UseSmileIDTestScenario.byName[name]?() ?? UseSmileIDTestScenario.named(name) else {
+    guard let scenario = UseSmileIDTestScenario.byName[name]?() else {
       throw UseSmileIDTestError.unknownScenario(name)
     }
     let aspectRatio = value(after: documentAspectRatioArgument).flatMap(Double.init)
