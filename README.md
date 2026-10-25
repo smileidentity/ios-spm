@@ -20,7 +20,7 @@ your SwiftUI app.
 | `UseSmileIDVisionFace` | the Apple Vision face analyzer, optional |
 | `UseSmileIDVisionDocument` | the Apple Vision document analyzer, optional |
 
-iOS 15 or later · Swift tools 6.0 · built with Xcode 26.4
+iOS 15 or later · Swift tools 6.0 · built with Xcode 27.1
 
 ## Docs and releases
 
