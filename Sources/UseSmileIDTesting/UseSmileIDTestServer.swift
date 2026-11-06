@@ -1,11 +1,13 @@
 import Foundation
 import Network
 import UseSmileID
+@_spi(UseSmileIDInternal) import UseSmileIDBridge
 
 /// The Smile ID backend, in process, for a flow under test. Every `/v3` job
 /// endpoint answers the canonical accepted-job payload unless a test scripts something else with
 /// `respond(_:with:)`, and every request is recorded, decoded, in `requests`. It listens on
-/// loopback only. A `UseSmileIDTest` makes one and closes it.
+/// loopback only. A `UseSmileIDTest` makes one and closes it; a test harness of your own can make
+/// one, and route the SDK to it with `router`.
 public final class UseSmileIDTestServer: @unchecked Sendable {
   /// Posted on the main queue after each request is recorded, so a view can show the latest.
   public static let didRecordRequest = Notification.Name("UseSmileIDTestServer.didRecordRequest")
@@ -49,7 +51,10 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
     lock.withLock { scripted[path] = response }
   }
 
-  init() throws {
+  /// Starts a server of your own, for a harness that doesn't use `UseSmileIDTest`. Install its
+  /// `router` in `interceptors { }`, and close it when the test ends.
+  /// - Throws: when the listener can't start.
+  public init() throws {
     let parameters = NWParameters.tcp
     parameters.requiredLocalEndpoint = .hostPort(host: .ipv4(.loopback), port: .any)
     listener = try NWListener(using: parameters)
@@ -75,8 +80,9 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
     listener.cancel()
   }
 
-  /// The port the server listens on once it is ready, or nil once it is closed or failed to start.
-  func openPort() async -> UInt16? {
+  /// The port the server listens on, on `127.0.0.1`, once it is ready; nil once it is closed or
+  /// failed to start.
+  public func port() async -> UInt16? {
     await withCheckedContinuation { continuation in
       let answer: UInt16?? = lock.withLock {
         switch state {
@@ -96,18 +102,19 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
   }
 
   /// Sends every request to this server, whatever its host, so a custom base URL can't reach a live
-  /// backend from a test. Once the server is closed it refuses requests instead,
+  /// backend from a test. It is the SDK's test route: the SDK runs it innermost, below its guard, in a
+  /// debuggable app or on the sandbox only. Once the server is closed it refuses requests instead,
   /// naming the path and never printing the body.
-  var router: Interceptor {
+  public var router: Interceptor {
     Router(server: self)
   }
 
-  private struct Router: Interceptor {
+  private struct Router: UseSmileIDTestRoute {
     let server: UseSmileIDTestServer
 
     func intercept(_ request: URLRequest, chain: InterceptorChain) async throws -> (URLResponse, Data) {
       let path = request.url?.path ?? "/"
-      guard let port = await server.openPort(),
+      guard let port = await server.port(),
             let url = request.url,
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
         throw UseSmileIDTestServerError.closed(path: path)

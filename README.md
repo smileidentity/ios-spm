@@ -21,7 +21,7 @@ your SwiftUI app.
 | `UseSmileIDVisionDocument` | the Apple Vision document analyzer, optional |
 | `UseSmileIDTesting` | test doubles for your own UI tests: a scripted subject and an in-process backend. A test starts only in a Debug build |
 
-iOS 15 or later · Swift tools 6.0 · built with Xcode 26.4
+iOS 15 or later · Swift tools 6.0 · built with Xcode 27.1
 
 ## Docs and releases
 

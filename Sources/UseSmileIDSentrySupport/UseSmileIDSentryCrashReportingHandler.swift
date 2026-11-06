@@ -1,6 +1,6 @@
 internal import Sentry
 import UIKit
-@_spi(CrashReportingSeam) import UseSmileIDBridge
+@_spi(CrashReportingSeam) @_spi(UseSmileIDInternal) import UseSmileIDBridge
 
 /// The Sentry-backed handler, shipped in the SPM source layer so the compiled binary never links
 /// Sentry. Discovered via `NSClassFromString` — keep the `@objc` name in sync with
@@ -9,7 +9,7 @@ import UIKit
 final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashReportingHandler,
   @unchecked Sendable {
   /// Hardcoded — depending on `UseSmileIDMetadataFactory` would be a cycle; bump in lockstep with its `sdkVersion`.
-  private static let sdkVersion = "12.3.0" // x-release-please-version
+  private static let sdkVersion = "12.4.0" // x-release-please-version
 
   /// Substring matched against stack-frame `package`/`function` to tag SmileID-origin events.
   private static let smileIDMarker = "UseSmileID"
@@ -32,7 +32,7 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
   }
 
   func enable(useSandbox: Bool) {
-    enable(dsn: ArkanaKeys.Global().sENTRY_DSN, useSandbox: useSandbox)
+    enable(dsn: BridgeTables.Global().tableA, useSandbox: useSandbox)
   }
 
   /// Seam for tests to inject a deterministic DSN; the public path reads Arkana's.
