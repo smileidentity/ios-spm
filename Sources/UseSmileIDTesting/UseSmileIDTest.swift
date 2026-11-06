@@ -5,10 +5,9 @@ import UseSmileIDBridge
 /// A flow under test, with no Smile ID backend and no subject in front of the camera. `server`
 /// stands in for the backend, `scenario` for the person, and `token` for a `/v3/token` token.
 ///
-/// A test starts only in a Debug build. Every type here exists in every configuration, so your
-/// calls compile everywhere, but without `DEBUG` `fromLaunchArguments()` returns nil, `init` throws
-/// and the scripted analyzers aren't compiled, so a launch argument can't turn a Release build
-/// into a test run.
+/// A test built in code (`init`) runs in any configuration, as Android's does, so a release-shaped
+/// build can be tested end to end. Only `fromLaunchArguments()` is limited to Debug builds: without
+/// `DEBUG` it returns nil, so a launch argument can't turn a shipped build into a test run.
 ///
 /// Start one from a UI test's launch argument with `fromLaunchArguments()`, once, when the app
 /// launches, then wire it into the blocks your flow already writes:
@@ -24,7 +23,7 @@ import UseSmileIDBridge
 /// and show `UseSmileIDTestReport(test:)`, which your UI test reads. A unit test hosted in the app
 /// reads `server` directly.
 public final class UseSmileIDTest: @unchecked Sendable {
-  /// The launch argument `fromLaunchArguments()` reads: one of the `UseSmileIDTestScenario` names.
+  /// The launch argument `fromLaunchArguments()` reads: a `UseSmileIDTestScenario` name, or the name its JSON gives it.
   public static let scenarioArgument = "-UseSmileIDTestScenario"
   /// The launch argument for `documentAspectRatio`, such as `0.71` for a passport.
   public static let documentAspectRatioArgument = "-UseSmileIDTestDocumentAspectRatio"
@@ -44,15 +43,11 @@ public final class UseSmileIDTest: @unchecked Sendable {
   ///   - documentAspectRatio: your document's width to height, as its document type gives it (a
   ///     passport is portrait, about 0.71), so a scripted document is framed the way the capture
   ///     screen expects; nil frames an ID card. Only a document scenario reads it.
-  /// - Throws: `UseSmileIDTestError.notADebugBuild` outside a Debug build.
+  /// - Throws: when the test server can't start.
   public init(scenario: UseSmileIDTestScenario, documentAspectRatio: Double? = nil) throws {
-    #if DEBUG
-      self.scenario = scenario
-      self.documentAspectRatio = documentAspectRatio
-      server = try UseSmileIDTestServer()
-    #else
-      throw UseSmileIDTestError.notADebugBuild
-    #endif
+    server = try UseSmileIDTestServer()
+    self.scenario = scenario
+    self.documentAspectRatio = documentAspectRatio
   }
 
   /// The test the app was launched for, or nil when it was launched without `scenarioArgument` or
@@ -85,7 +80,7 @@ public final class UseSmileIDTest: @unchecked Sendable {
     }
     guard arguments.contains(scenarioArgument) else { return nil }
     let name = value(after: scenarioArgument) ?? ""
-    guard let scenario = UseSmileIDTestScenario.byName[name]?() else {
+    guard let scenario = UseSmileIDTestScenario.byName[name]?() ?? UseSmileIDTestScenario.named(name) else {
       throw UseSmileIDTestError.unknownScenario(name)
     }
     let aspectRatio = value(after: documentAspectRatioArgument).flatMap(Double.init)
@@ -103,22 +98,18 @@ public final class UseSmileIDTest: @unchecked Sendable {
   /// scenario the document analyzer too. A document job captures a selfie as well, so a document
   /// scenario scripts it with `UseSmileIDTestScenario.selfieHappyPath`.
   public var analyzers: [CaptureTypeConfiguration] {
-    #if DEBUG
-      let script = scenario.script
-      let selfie = script.captureType == ScriptedScenario.selfie ? script : UseSmileIDTestScenario.selfieHappyPath.script
-      var configurations = [
-        forCaptureType(.selfie) { $0.addAnalyzer(ScriptedFaceAnalyzer.Factory(scenario: selfie)) }
-      ]
-      if script.captureType == ScriptedScenario.document {
-        let aspectRatio = documentAspectRatio
-        configurations.append(forCaptureType(.document) {
-          $0.addAnalyzer(ScriptedDocumentAnalyzer.Factory(scenario: script, aspectRatio: aspectRatio))
-        })
-      }
-      return configurations
-    #else
-      return []
-    #endif
+    let script = scenario.script
+    let selfie = script.captureType == ScriptedScenario.selfie ? script : UseSmileIDTestScenario.selfieHappyPath.script
+    var configurations = [
+      forCaptureType(.selfie) { $0.addAnalyzer(ScriptedFaceAnalyzer.Factory(scenario: selfie)) }
+    ]
+    if script.captureType == ScriptedScenario.document {
+      let aspectRatio = documentAspectRatio
+      configurations.append(forCaptureType(.document) {
+        $0.addAnalyzer(ScriptedDocumentAnalyzer.Factory(scenario: script, aspectRatio: aspectRatio))
+      })
+    }
+    return configurations
   }
 
   /// Stops the server; requests after this are refused.
@@ -143,7 +134,9 @@ public final class UseSmileIDTest: @unchecked Sendable {
 
 /// Why a test didn't start.
 public enum UseSmileIDTestError: Error, Equatable, CustomStringConvertible {
-  /// `UseSmileIDTesting` was built without `DEBUG`, as a Release build is, where no test starts.
+  /// No longer thrown: a test built in code runs in any configuration. (It was thrown when
+  /// `UseSmileIDTesting` was built without `DEBUG`.)
+  @available(*, deprecated, message: "UseSmileIDTest(scenario:) and UseSmileIDTestServer() now run in any configuration; only fromLaunchArguments() is Debug-only.")
   case notADebugBuild
   /// The launch arguments name no scenario `fromLaunchArguments()` knows.
   case unknownScenario(String)
