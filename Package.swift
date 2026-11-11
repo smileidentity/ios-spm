@@ -53,23 +53,23 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "UseSmileID",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.4.0-SNAPSHOT.20261111120919.43015702571/UseSmileID.xcframework.zip",
-            checksum: "1892d6ef6c83fee58f47b116822d0453f00ce21a379db21bf7685db50a44de4b"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.4.0-SNAPSHOT.20261111121427.43016603861/UseSmileID.xcframework.zip",
+            checksum: "e20e52f6e6266021ec1ae7b4b8f281e8db1c5751d9c17102d8b811b5a4db682d"
         ),
         .binaryTarget(
             name: "UseSmileIDBridge",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.4.0-SNAPSHOT.20261111120919.43015702571/UseSmileIDBridge.xcframework.zip",
-            checksum: "6e03577a83325f6fba0c7bd8b7212e33cfd20cc961a04df33b1322294a10ad79"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.4.0-SNAPSHOT.20261111121427.43016603861/UseSmileIDBridge.xcframework.zip",
+            checksum: "c3dd3809e55b76fa5c87fb98dc701c1fd030a96cd22a11dcb7f01f3610576033"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionFace",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.4.0-SNAPSHOT.20261111120919.43015702571/UseSmileIDVisionFace.xcframework.zip",
-            checksum: "2975b61d8cfb79a9ea19202a71c5157ac9dd6462726397232f5aad5c0b701278"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.4.0-SNAPSHOT.20261111121427.43016603861/UseSmileIDVisionFace.xcframework.zip",
+            checksum: "20e922ab66fc706975de5cd61a1a6d4930e2a09ce2b2502fc9d4fa327e406d9d"
         ),
         .binaryTarget(
             name: "UseSmileIDVisionDocument",
-            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.4.0-SNAPSHOT.20261111120919.43015702571/UseSmileIDVisionDocument.xcframework.zip",
-            checksum: "35288ebbc121675bc9b0a55b8eae115a37ea0b3b88001f98fa36b9357c63e8e2"
+            url: "https://github.com/smileidentity/ios-spm/releases/download/v12.4.0-SNAPSHOT.20261111121427.43016603861/UseSmileIDVisionDocument.xcframework.zip",
+            checksum: "539831d2767dfeb7ca37e2aecfe989ae68f00bcbb299dc2c8a9a48cf142ac111"
         ),
         // Carries the real package dependencies — binary targets can't declare dependencies themselves.
         .target(
