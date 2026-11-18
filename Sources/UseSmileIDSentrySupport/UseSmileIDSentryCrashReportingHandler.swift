@@ -31,7 +31,11 @@ final class UseSmileIDSentryCrashReportingHandler: NSObject, UseSmileIDCrashRepo
     currentHub() != nil
   }
 
-  /// Starts reporting to `dsn`: `UseSmileIDCrashReporting` passes the SDK's own, tests a fixed one.
+  func enable(useSandbox: Bool) {
+    enable(dsn: BridgeTables.Global().tableA, useSandbox: useSandbox)
+  }
+
+  /// Seam for tests to inject a deterministic DSN; the public path reads Arkana's.
   func enable(dsn: String, useSandbox: Bool = false) {
     guard !dsn.isEmpty else {
       // No DSN (e.g. a local build without Arkana) silently disables reporting.
