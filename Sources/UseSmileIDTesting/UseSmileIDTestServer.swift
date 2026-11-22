@@ -47,8 +47,10 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
   }
 
   /// Makes `path` answer `response` from now on, instead of what it answers by default.
+  /// `.byDefault` puts the default back.
   public func respond(_ path: String, with response: UseSmileIDTestResponse) {
-    lock.withLock { scripted[path] = response }
+    // The default is the absence of a script, so a path put back to it is one nothing is scripted for.
+    lock.withLock { scripted[path] = response == .byDefault ? nil : response }
   }
 
   /// Starts a server of your own, for a harness that doesn't use `UseSmileIDTest`. Install its
@@ -196,7 +198,8 @@ public final class UseSmileIDTestServer: @unchecked Sendable {
     Task { @MainActor in NotificationCenter.default.post(name: Self.didRecordRequest, object: self) }
     let (status, body): (Int, String)
     switch response {
-    case .none:
+    // `respond` never stores `.byDefault`; the switch names it because it must cover every case.
+    case .none, .byDefault:
       let isSubmission = Self.submissionPaths.contains { request.path.hasPrefix($0) }
       (status, body) = (200, isSubmission ? Self.acceptedJob(request.path) : "{}")
     case .status(let code, let scriptedBody):
@@ -256,4 +259,7 @@ public enum UseSmileIDTestResponse: Equatable, Sendable {
   case tokenExpired
   /// The connection drops before an answer.
   case connectionDropped
+  /// What the path answers when nothing is scripted: an accepted job from a `/v3` job endpoint,
+  /// `{}` from any other. It undoes an earlier `respond(_:with:)`.
+  case byDefault
 }
